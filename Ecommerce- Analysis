@@ -1,0 +1,26 @@
+import numpy as np
+import pandas as pd
+# importing pandas
+import xlrd
+# importing xlrd for Excel files
+import openpyxl
+# importing openpyxl for uploading excel file
+import matplotlib.pyplot as plt
+# import matplotlib to plot pivot chart
+df = pd.read_excel("C:\\Users\\mayur\\Downloads\\OnlineRetail.xlsx", engine='openpyxl', )
+# dataframe created from Excel file
+df1 = df.assign(TotalPrice=[df.loc[i, "Quantity"] * df.loc[i, "UnitPrice"] for i in range(len(df.index))])
+# creating a new dataframe adding a new column to the new dataframe using assign method, adding "total price" column;
+# total price= unit price * Quantity
+pivot_country = pd.pivot_table(df1, values=['TotalPrice'], index='Country', aggfunc='sum')
+# using pivot table function in pandas to calculate sum of sales per country
+group_country = df1.groupby('Country')[['TotalPrice']].sum()
+group_stock_code = df1.groupby('StockCode')[['Quantity']].sum()
+# grouping by stock code and calculating the total quantity per stock code.
+filter_uk = df[df['Country'] == 'United Kingdom'][['CustomerID', 'InvoiceDate', 'Quantity', 'StockCode']]
+# extracting rows with Country as United Kingdom. The columns specified are the output for this query
+df2 = pd.DataFrame(pivot_country)
+# making pivot table to dataframe
+plot_data = pd.DataFrame(group_country)
+plot_data.plot(kind='bar')
+# also using matplotlib to plot line graph of total sales per country
